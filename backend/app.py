@@ -25,7 +25,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models.cnn import CNN
 from utils.feature_vector_generation import get_patch_yi
 
-app = Flask(__name__, static_url_path='/static', static_folder='static')
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 # Enable CORS for all routes
 CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')

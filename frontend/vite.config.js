@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    base: '/static/', // Ensure assets are referenced as /static/...
     host: true,
     allowedHosts: ['image-forgery-detection-cnn-updated.onrender.com'],
     proxy: {
