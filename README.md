@@ -5,33 +5,42 @@ This project implements image forgery detection using Convolutional Neural Netwo
 ## Project Structure
 
 ```
-├── configs/               # Configuration files
-│   └── model_config.py    # Model parameters and settings
-├── data/                  # Data directory
-│   ├── raw/               # Original, immutable data
-│   ├── processed/         # Cleaned and processed data ready for modeling
-│   ├── interim/           # Intermediate data
-│   └── external/          # External data sources
-├── docs/                  # Documentation
-│   ├── images/            # Images for documentation
-│   └── plots/             # Generated plots and visualizations
-├── models/                # Model implementations
-│   └── weights/           # Saved model weights
-├── scripts/               # Utility scripts
-│   ├── minimal_demo.py    # Minimal demo script
-│   ├── run_improved_model.py # Improved model runner
-│   └── ...                # Other scripts
-├── tests/                 # Tests
-│   ├── test_models.py     # Model tests
-│   └── generate_test_report.py # Test report generator
-├── utils/                 # Utility functions
-│   ├── common.py          # Common utility functions
-│   ├── feature_extraction.py # Feature extraction utilities
-│   └── extract_patches.py # Image patch extraction utilities
-├── backend/               # Backend server implementation
-│   └── app.py             # Flask API
-└── react-frontend/        # React frontend application
-    └── src/               # Frontend source code
+Image-Forgery-Detection-CNN-Updated/
+├── .github/
+│   └── workflows/                # GitHub Actions workflow files
+├── Documents/                    # Supplementary documents
+├── backend/                      # Backend server implementation
+│   └── app.py                    # Flask API entry point
+├── configs/                      # Configuration files
+│   └── model_config.py           # Model parameters and settings
+├── data/                         # Data directory
+│   ├── raw/                      # Original, immutable data
+│   ├── processed/                # Cleaned and processed data ready for modeling
+│   ├── interim/                  # Intermediate data
+│   └── external/                 # External data sources
+├── docs/                         # Project documentation
+│   ├── images/                   # Documentation images
+│   └── plots/                    # Generated plots and visualizations
+├── frontend/                     # React frontend application
+│   └── src/                      # Frontend source code
+├── models/                       # Model implementations
+│   └── weights/                  # Saved model weights
+├── reports/                      # Test reports and analysis outputs
+├── scripts/                      # Utility scripts
+│   ├── minimal_demo.py           # Minimal demo script
+│   ├── run_improved_model.py     # Script to run the improved model
+│   └── ...                       # Other supporting scripts
+├── tests/                        # Test suites
+│   ├── test_models.py            # Model test cases
+│   └── generate_test_report.py   # Test report generator
+├── utils/                        # Utility functions and helpers
+│   ├── common.py                 # Common utility functions
+│   ├── feature_extraction.py     # Feature extraction utilities
+│   └── extract_patches.py        # Image patch extraction utilities
+├── .gitignore                    # Git ignore file
+├── Dockerfile                    # Docker build configuration
+├── README.md                     # Project overview and instructions
+└── requirements.txt              # Python dependency list  
 ```
 
 ## Installation

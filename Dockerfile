@@ -18,19 +18,18 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 # Set the working directory
 WORKDIR /app
 
+# Copy the entire project into the container
+COPY . /app
+
 # -------------------------
 # Setup backend
 # -------------------------
-# Copy backend code and install Python dependencies
-COPY backend/ ./backend/
-WORKDIR /app/backend
-RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
+# Install Python dependencies (models, configs, etc. are now available)
+RUN pip3 install --upgrade pip && pip3 install -r backend/requirements.txt
 
 # -------------------------
 # Setup frontend
 # -------------------------
-WORKDIR /app
-COPY frontend/ ./frontend/
 WORKDIR /app/frontend
 RUN npm install
 
