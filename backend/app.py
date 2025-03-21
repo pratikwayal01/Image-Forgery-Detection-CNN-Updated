@@ -498,7 +498,7 @@ def localize_tampering(image_path, model, patch_size=64, stride=16, localization
 
 @app.route('/')
 def index():
-    return jsonify({"message": "Flask backend API is running."})
+    return render_template('index.html')
 
 @app.route('/about')
 def about():
@@ -1326,7 +1326,7 @@ def api_analyze_ensemble():
     Analyze an image using ensemble approach with multiple models
     """
     if 'file' not in request.files:
-        return render_template('index.html')
+        return jsonify({'error': 'No file part'}), 400
     
     file = request.files['file']
     show_localization = request.form.get('show_localization', 'false') == 'true'
