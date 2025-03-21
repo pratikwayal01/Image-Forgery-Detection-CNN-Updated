@@ -498,7 +498,7 @@ def localize_tampering(image_path, model, patch_size=64, stride=16, localization
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return jsonify({"message": "Flask backend API is running."})
 
 @app.route('/about')
 def about():
