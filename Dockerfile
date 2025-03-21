@@ -1,48 +1,26 @@
-### Base image for Python backend
-FROM python:3.9 AS backend
+# Start from a Node image which includes Node 18.16.0
+FROM node:18.16.0
 
-# Set working directory
+# Install Python 3.8.2 and pip
+RUN apt-get update && apt-get install -y python3.8 python3-pip && rm -rf /var/lib/apt/lists/*
+
+# Set work directory
 WORKDIR /app
 
-# Copy and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy backend and install Python dependencies
+COPY backend/ ./backend/
+WORKDIR /app/backend
+RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
 
-# Copy the entire project
-COPY . .
-
-# Expose the backend port
-EXPOSE 5000
-
-# Command to run backend
-CMD ["python", "backend/app.py"]
-
-### Base image for Node.js frontend
-FROM node:18 AS frontend
-
-# Set working directory
-WORKDIR /frontend
-
-# Copy frontend code
-COPY react-frontend/ ./
-
-# Install dependencies and build
-RUN npm install && npm run build
-
-### Final production image
-FROM python:3.9
-
-# Set working directory
+# Copy frontend and install Node dependencies
 WORKDIR /app
+COPY frontend/ ./frontend/
+WORKDIR /app/frontend
+RUN npm install
 
-# Copy backend and trained models from backend stage
-COPY --from=backend /app /app
+# Expose both ports (backend:5000, frontend:3000)
+EXPOSE 5000 3000
 
-# Copy built frontend from frontend stage
-COPY --from=frontend /frontend/dist /app/backend/static
-
-# Expose the backend port
-EXPOSE 5000
-
-# Command to run the application
-CMD ["python", "backend/app.py"]
+# Use a shell script to run both servers concurrently
+WORKDIR /app
+CMD sh -c "cd backend && python3 app.py & cd frontend && npm run dev"
