@@ -1,10 +1,10 @@
-# Dockerfile (single container)
+# Dockerfile (single container serving both backend & frontend)
 FROM ubuntu:20.04
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update packages and install Python 3.8, pip, and curl (needed for Node)
+# Update packages and install Python 3.8, pip, curl, and other dependencies
 RUN apt-get update && apt-get install -y \
     python3.8 \
     python3-pip \
@@ -22,20 +22,34 @@ WORKDIR /app
 COPY . /app
 
 # -------------------------
-# Setup backend
-# -------------------------
-# Install Python dependencies (models, configs, etc. are now available)
-RUN pip3 install --upgrade pip && pip3 install -r backend/requirements.txt
-
-# -------------------------
-# Setup frontend
+# Build the frontend (production build)
 # -------------------------
 WORKDIR /app/frontend
-RUN npm install
+RUN npm install && npm run build
 
-# Expose the ports for backend and frontend
-EXPOSE 5000 3000
+# -------------------------
+# Prepare Flask to serve the built frontend
+# -------------------------
+# Create directories if they don't exist
+RUN mkdir -p /app/backend/templates && mkdir -p /app/backend/static
 
-# Start both processes (for development only)
-WORKDIR /app
-CMD sh -c "cd backend && python3.8 app.py & cd frontend && npm run dev"
+# Copy the built index.html into the Flask templates folder
+RUN cp /app/frontend/dist/index.html /app/backend/templates/index.html
+
+# Copy all static assets into the Flask static folder
+RUN cp -r /app/frontend/dist/assets /app/backend/static/
+
+# -------------------------
+# Setup backend
+# -------------------------
+WORKDIR /app/backend
+RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
+
+# Make sure Flask uses the PORT environment variable (default to 5000)
+ENV PORT 5000
+
+# Expose the port that Render will use
+EXPOSE $PORT
+
+# Start the Flask server
+CMD ["python3.8", "app.py"]
