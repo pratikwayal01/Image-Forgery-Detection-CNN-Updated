@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Get the API URL from environment variables
-const API_BASE_URL = "http://localhost:5000";
+// Get the API URL from environment variables (defaults to an empty string for relative URLs)
+const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
 // Create an axios instance with default config
 const api = axios.create({
@@ -114,9 +114,7 @@ export const analyzeImageEnsemble = async (
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
-        `Ensemble analysis failed: ${
-          error.response.data.error || "Unknown error"
-        }`
+        `Ensemble analysis failed: ${error.response.data.error || "Unknown error"}`
       );
     }
     throw new Error("Failed to connect to the server. Please try again later.");
