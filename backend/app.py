@@ -497,8 +497,14 @@ def localize_tampering(image_path, model, patch_size=64, stride=16, localization
         traceback.print_exc()
         return {}
 
-@app.route('/')
-def index():
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    # Optionally, you can log the requested path for debugging
+    print(f"Catch-all route reached with path: {path}")
     return render_template('index.html')
 
 # @app.route('/about')
