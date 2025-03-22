@@ -28,7 +28,8 @@ from utils.feature_vector_generation import get_patch_yi
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 # Enable CORS for all routes
 CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
+#app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 
 # Create upload folder if it doesn't exist
@@ -500,9 +501,9 @@ def localize_tampering(image_path, model, patch_size=64, stride=16, localization
 def index():
     return render_template('index.html')
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+# @app.route('/about')
+# def about():
+#     return render_template('about.html')
 
 @app.route('/api/analyze', methods=['POST'])
 def api_analyze():

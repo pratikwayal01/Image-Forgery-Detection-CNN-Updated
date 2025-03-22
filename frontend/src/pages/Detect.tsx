@@ -349,7 +349,7 @@ const Detect: React.FC = () => {
               <>
                 <AnalysisResult
                   result={result}
-                  apiBaseUrl={"http://localhost:5000"}
+                  apiBaseUrl={""}
                 />
 
                 <div className="mt-8 flex justify-center">
