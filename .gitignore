@@ -26,7 +26,7 @@ data/NC16/
 data
 # Uploaded images
 website/static/uploads/
-
+node_modules/
 # Large model files
 *.pt
 *.pth
