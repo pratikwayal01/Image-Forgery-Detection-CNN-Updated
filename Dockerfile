@@ -52,4 +52,4 @@ ENV PORT 5000
 EXPOSE $PORT
 
 # Start the Flask server
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["python3.8", "app.py"]
