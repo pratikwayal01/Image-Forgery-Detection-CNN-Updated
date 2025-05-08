@@ -166,7 +166,7 @@ const About: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <a
-                href="https://github.com/yourusername/image-forgery-detection-cnn"
+                href="https://github.com/pratikwayal01/image-forgery-detection-cnn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition duration-200"
@@ -184,7 +184,7 @@ const About: React.FC = () => {
               </a>
 
               <a
-                href="https://linkedin.com/in/yourusername"
+                href="https://linkedin.com/in/pratilwayal"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition duration-200"
@@ -202,7 +202,7 @@ const About: React.FC = () => {
               </a>
 
               <a
-                href="mailto:your.email@example.com"
+                href="mailto:pratikswayal123@gmail.com"
                 className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition duration-200 md:col-span-2"
               >
                 <FaEnvelope className="text-2xl mr-3 text-green-600 dark:text-green-400" />
@@ -211,7 +211,7 @@ const About: React.FC = () => {
                     Email Contact
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    your.email@example.com
+                    pratikswayal123@gmail.com
                   </div>
                 </div>
                 <FaChevronRight className="ml-auto text-gray-400" />
