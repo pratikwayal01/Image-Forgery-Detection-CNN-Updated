@@ -26,7 +26,7 @@ const About: React.FC = () => {
               Image Forgery Detection using CNN
             </h2>
 
-            <div className="prose dark:prose-invert max-w-none">
+            <div className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
               <p>
                 This project implements a Convolutional Neural Network (CNN)
                 based approach for detecting image forgeries, particularly
@@ -100,7 +100,7 @@ const About: React.FC = () => {
               Research Background
             </h2>
 
-            <div className="prose dark:prose-invert max-w-none">
+            <div className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
               <p>
                 Image forgery detection is an increasingly important field in
                 digital forensics as image manipulation becomes more
@@ -156,7 +156,7 @@ const About: React.FC = () => {
               Contact & Resources
             </h2>
 
-            <div className="prose dark:prose-invert max-w-none mb-6">
+            <div className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
               <p>
                 This project was developed as a final year project. Feel free to
                 reach out for questions, contributions, or collaboration
