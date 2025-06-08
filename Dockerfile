@@ -1,32 +1,42 @@
+# Start from an official Node.js image to build the frontend
+FROM node:18 AS frontend-builder
+
+WORKDIR /app/frontend
+
+# Copy frontend files and install dependencies
+COPY frontend/ ./
+
+# Build the frontend (assuming Vite or similar)
+RUN npm install && npm run build
+
+# Now use a lightweight Python image for the backend
 FROM python:3.8-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies required for OpenCV
+# Install OS dependencies for OpenCV or others
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY backend/requirements-api.txt .
-
-# Install Python dependencies
+# Copy backend requirements and install them
+COPY backend/requirements-api.txt ./
 RUN pip install --no-cache-dir -r requirements-api.txt
 
-# Copy the backend code
-COPY backend /app
+# Copy backend code
+COPY backend/ ./backend/
 
-# Set Python path to include app directory
-ENV PYTHONPATH=/app:$PYTHONPATH
+# Copy frontend build output into backend's static or templates directory
+COPY --from=frontend-builder /app/frontend/dist/ ./backend/static/
 
-# Set environment variables
+# Set env variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/backend:$PYTHONPATH
 
-# Expose port 8000
+# Expose API port
 EXPOSE 8000
 
-# Run the FastAPI application
-CMD ["python", "run_api.py"] 
+# Start the backend server
+CMD ["python", "backend/run_api.py"]
