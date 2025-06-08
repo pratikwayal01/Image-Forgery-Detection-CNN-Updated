@@ -36,7 +36,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app/backend:$PYTHONPATH
 
 # Expose API port
-EXPOSE 8000
+EXPOSE 3000 
 
 # Start the backend server
 CMD ["python", "backend/run_api.py"]
