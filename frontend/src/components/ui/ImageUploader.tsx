@@ -30,7 +30,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     isDragReject,
   } = useImageUpload({
     maxSizeInMB,
-    onImageSelected,
+    ...(onImageSelected ? { onImageSelected } : {}),
   });
 
   return (

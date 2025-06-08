@@ -18,22 +18,24 @@ import ThreeDModel from "../components/3D_Model/3DModel";
 
 // Error boundary component for Spline
 class SplineErrorBoundary extends React.Component {
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: any) {
     return { hasError: true };
   }
 
   render() {
-    if (this.state.hasError) {
+    if ((this.state as { hasError: boolean }).hasError) {
       return (
         <div className="w-full h-full bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900"></div>
       );
     }
 
+    // Return children if no error
+    // @ts-ignore
     return this.props.children;
   }
 }
@@ -41,7 +43,7 @@ class SplineErrorBoundary extends React.Component {
 const Home = () => {
   const [splineError, setSplineError] = useState(false);
 
-  const handleSplineError = (e) => {
+  const handleSplineError = (e: any) => {
     console.error("Spline loading error:", e);
     setSplineError(true);
   };

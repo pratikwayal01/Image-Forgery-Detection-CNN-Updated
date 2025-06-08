@@ -3,10 +3,10 @@ import * as THREE from "three";
 import { Play, Pause, RotateCcw, Zap, Eye, Settings, Info } from "lucide-react";
 
 const ThreeDModel = () => {
-  const mountRef = useRef(null);
-  const sceneRef = useRef(null);
-  const rendererRef = useRef(null);
-  const animationIdRef = useRef(null);
+  const mountRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const animationIdRef = useRef<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showControls, setShowControls] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
@@ -84,8 +84,27 @@ const ThreeDModel = () => {
     scene.add(glowLight);
 
     // Neural network components
-    const neuralNodes = [];
-    const connections = [];
+    interface NeuralNode extends THREE.Mesh {
+      userData: {
+      originalPosition: THREE.Vector3;
+      phase: number;
+      speed: number;
+      amplitude: number;
+      originalEmissive: number;
+      pulsePhase: number;
+      };
+      material: THREE.MeshStandardMaterial;
+    }
+
+    interface Connection {
+      line: THREE.Line;
+      node1: NeuralNode;
+      node2: NeuralNode;
+      pulsePhase: number;
+    }
+
+    const neuralNodes: NeuralNode[] = [];
+    const connections: Connection[] = [];
 
     // Create enhanced neural nodes
     for (let i = 0; i < nodeCount; i++) {
@@ -120,7 +139,7 @@ const ThreeDModel = () => {
       node.castShadow = true;
       node.receiveShadow = true;
       scene.add(node);
-      neuralNodes.push(node);
+      neuralNodes.push(node as unknown as NeuralNode);
     }
 
     // Create connections with enhanced materials
@@ -203,9 +222,17 @@ const ThreeDModel = () => {
     // Mouse interaction
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    let hoveredNode = null;
+    let hoveredNode: NeuralNode | null = null;
 
-    const onMouseMove = (event) => {
+    interface MouseMoveEvent extends MouseEvent {
+      // No additional fields needed, but allows for explicit typing
+    }
+
+    interface OnMouseMove {
+      (event: MouseMoveEvent): void;
+    }
+
+    const onMouseMove: OnMouseMove = (event) => {
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -253,11 +280,11 @@ const ThreeDModel = () => {
       // Enhanced connection animations
       connections.forEach(({ line, node1, node2, pulsePhase }) => {
         line.geometry.setFromPoints([node1.position, node2.position]);
-        line.material.opacity = connectionOpacity * (0.5 + Math.sin(time * 3 + pulsePhase) * 0.5);
+        (line.material as THREE.LineBasicMaterial).opacity = connectionOpacity * (0.5 + Math.sin(time * 3 + pulsePhase) * 0.5);
         
         // Color shifting
         const hue = (time * 0.1 + pulsePhase) % 1;
-        line.material.color.setHSL(0.5 + hue * 0.3, 1, 0.5);
+        (line.material as THREE.LineBasicMaterial).color.setHSL(0.5 + hue * 0.3, 1, 0.5);
       });
 
       // Enhanced particle system
@@ -291,7 +318,7 @@ const ThreeDModel = () => {
             hoveredNode.material.emissiveIntensity = 2;
             hoveredNode.scale.setScalar(1);
           }
-          hoveredNode = intersects[0].object;
+          hoveredNode = intersects[0].object as NeuralNode;
         }
         hoveredNode.scale.setScalar(1.5 + Math.sin(time * 10) * 0.2);
         hoveredNode.material.emissiveIntensity = 6;
@@ -312,22 +339,32 @@ const ThreeDModel = () => {
 
     const onMouseDown = () => { isDragging = true; };
     const onMouseUp = () => { isDragging = false; };
-    const onMouseMoveControl = (event) => {
+    interface MouseMoveControlEvent extends MouseEvent {
+      offsetX: number;
+      offsetY: number;
+    }
+
+    interface PreviousMousePosition {
+      x: number;
+      y: number;
+    }
+
+    const onMouseMoveControl = (event: MouseMoveControlEvent): void => {
       if (isDragging) {
-        const deltaMove = {
-          x: event.offsetX - previousMousePosition.x,
-          y: event.offsetY - previousMousePosition.y
-        };
-        
-        const deltaRotationQuaternion = new THREE.Quaternion()
-          .setFromEuler(new THREE.Euler(
-            THREE.MathUtils.degToRad(deltaMove.y * 0.5),
-            THREE.MathUtils.degToRad(deltaMove.x * 0.5),
-            0,
-            'XYZ'
-          ));
-        
-        camera.quaternion.multiplyQuaternions(deltaRotationQuaternion, camera.quaternion);
+      const deltaMove: PreviousMousePosition = {
+        x: event.offsetX - previousMousePosition.x,
+        y: event.offsetY - previousMousePosition.y
+      };
+      
+      const deltaRotationQuaternion = new THREE.Quaternion()
+        .setFromEuler(new THREE.Euler(
+        THREE.MathUtils.degToRad(deltaMove.y * 0.5),
+        THREE.MathUtils.degToRad(deltaMove.x * 0.5),
+        0,
+        'XYZ'
+        ));
+      
+      camera.quaternion.multiplyQuaternions(deltaRotationQuaternion, camera.quaternion);
       }
       
       previousMousePosition = { x: event.offsetX, y: event.offsetY };
