@@ -1,27 +1,46 @@
-# ====== Stage 1: Build frontend using Node.js ======
-FROM node:18 AS frontend-builder
+# ==== Base: Ubuntu ====
+FROM ubuntu:22.04
 
-# Set working directory
-WORKDIR /app/frontend
+# Set non-interactive for apt
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy frontend source code
-COPY frontend/ ./ 
-
-# Install frontend dependencies and build
-RUN npm install && npm run build
-
-
-# ====== Stage 2: Backend using Python ======
-FROM python:3.8-slim
-
-# Set working directory for backend
-WORKDIR /app
-
-# Install system dependencies (for OpenCV, etc.)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
+    python3.8 \
+    python3-pip \
+    python3-venv \
+    nodejs \
+    npm \
+    curl \
     libgl1-mesa-glx \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
+
+# Create working directory
+WORKDIR /app
+
+# --------------------------
+# Step 1: Build frontend
+# --------------------------
+COPY frontend/ ./frontend/
+WORKDIR /app/frontend
+
+RUN npm install && npm run build
+
+# --------------------------
+# Step 2: Set up backend
+# --------------------------
+WORKDIR /app
+
+# Copy backend files
+COPY backend/ ./backend/
+COPY backend/requirements-api.txt .
+
+# Install Python dependencies
+RUN python3 -m pip install --no-cache-dir -r requirements-api.txt
+
+# Copy frontend build output to backend/static
+RUN mkdir -p backend/static && cp -r frontend/dist/* backend/static/
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -29,18 +48,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app/backend:$PYTHONPATH \
     DEBUG=0
 
-# Copy and install backend Python dependencies
-COPY backend/requirements-api.txt ./
-RUN pip install --no-cache-dir -r requirements-api.txt
-
-# Copy backend source code
-COPY backend/ ./backend/
-
-# Copy built frontend into backend's static folder
-COPY --from=frontend-builder /app/frontend/dist/ ./backend/static/
-
-# Expose API port
+# Expose port for Render or similar platform
 EXPOSE 8000
 
-# Default command to run the backend API
-CMD ["python", "backend/run_api.py"]
+# Command to run API
+CMD ["python3", "backend/run_api.py"]
