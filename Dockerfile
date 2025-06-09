@@ -1,42 +1,46 @@
-# Start from an official Node.js image to build the frontend
+# ====== Stage 1: Build frontend using Node.js ======
 FROM node:18 AS frontend-builder
 
+# Set working directory
 WORKDIR /app/frontend
 
-# Copy frontend files and install dependencies
-COPY frontend/ ./
+# Copy frontend source code
+COPY frontend/ ./ 
 
-# Build the frontend (assuming Vite or similar)
+# Install frontend dependencies and build
 RUN npm install && npm run build
 
-# Now use a lightweight Python image for the backend
+
+# ====== Stage 2: Backend using Python ======
 FROM python:3.8-slim
 
+# Set working directory for backend
 WORKDIR /app
 
-# Install OS dependencies for OpenCV or others
+# Install system dependencies (for OpenCV, etc.)
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy backend requirements and install them
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/backend:$PYTHONPATH \
+    DEBUG=0
+
+# Copy and install backend Python dependencies
 COPY backend/requirements-api.txt ./
 RUN pip install --no-cache-dir -r requirements-api.txt
 
-# Copy backend code
+# Copy backend source code
 COPY backend/ ./backend/
 
-# Copy frontend build output into backend's static or templates directory
+# Copy built frontend into backend's static folder
 COPY --from=frontend-builder /app/frontend/dist/ ./backend/static/
 
-# Set env variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app/backend:$PYTHONPATH
-
 # Expose API port
-EXPOSE 3000 
+EXPOSE 8000
 
-# Start the backend server
+# Default command to run the backend API
 CMD ["python", "backend/run_api.py"]
